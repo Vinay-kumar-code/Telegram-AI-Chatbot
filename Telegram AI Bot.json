@@ -1,0 +1,194 @@
+{
+  "name": "Telegram AI Bot",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -592,
+        -400
+      ],
+      "id": "6105060f-e069-44c6-a3b0-54a74ff7e5eb",
+      "name": "Telegram Trigger",
+      "webhookId": "bc813678-9405-498d-8678-2407dc1e0fe1",
+      "credentials": {
+        "telegramApi": {
+          "id": "vZNb5z9eC6C4vgPV",
+          "name": "Telegram account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.from.id }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "HTML"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        416,
+        -400
+      ],
+      "id": "9f1c179c-840a-4668-acb5-2b07ed828019",
+      "name": "Send a text message",
+      "webhookId": "7eaa0ded-cdd0-48c3-a66a-c54e22a2be97",
+      "credentials": {
+        "telegramApi": {
+          "id": "vZNb5z9eC6C4vgPV",
+          "name": "Telegram account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.message.text }}",
+        "options": {
+          "systemMessage": "You are a helpful telegram assistant and use tool when user asked for recent data using tavily tool"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        -160,
+        -400
+      ],
+      "id": "4d893bd4-9f8b-4955-93dc-8c566346a980",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": "meta-llama/llama-4-maverick:free",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        -320,
+        -80
+      ],
+      "id": "99122fa8-81dc-4635-97ab-543d9a8281f4",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "Xy8tmrCLG0ZpDL1O",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "x",
+        "contextWindowLength": 7
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -112,
+        -80
+      ],
+      "id": "50657f24-eea6-4526-a941-8087e4b4d3e5",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "query": "={{ $('Telegram Trigger').item.json.message.text }}",
+        "options": {}
+      },
+      "type": "@tavily/n8n-nodes-tavily.tavilyTool",
+      "typeVersion": 1,
+      "position": [
+        16,
+        -80
+      ],
+      "id": "5fa08d2c-fc9b-4346-b253-856ea089f12e",
+      "name": "Search in Tavily",
+      "credentials": {
+        "tavilyApi": {
+          "id": "621VCUzrdeeSNIF1",
+          "name": "Tavily account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search in Tavily": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "d34e9f5f-c3e4-49ab-bedb-1c67e693ef8e",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "784b35d6c527fa8a569de3e1ae08d1437f562638a0dee8dbc6272d4251984db5"
+  },
+  "id": "ZrR5CG6hdo6c9oZI",
+  "tags": []
+}
