@@ -1,3 +1,16 @@
+
+
+
+
+
+
+
+<img width="1432" height="659" alt="image" src="https://github.com/user-attachments/assets/e289746d-2eea-41e9-b7ee-93dc3f881799" />
+
+
+
+
+
 n8n-based Telegram AI Chatbot 🤖
 A powerful, context-aware AI chatbot for Telegram, built entirely on the n8n automation platform. This chatbot provides fun and engaging conversations, has access to real-time information from the web, and remembers the context of your conversation.
 
